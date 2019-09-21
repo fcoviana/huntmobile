@@ -9,6 +9,10 @@ export default class Main extends Component {
         title: "Teste React Native"
     };
 
+    state = {
+        quantidade: 0
+    };
+
     componentDidMount(){
         this.loadProducts();
     }
@@ -18,13 +22,13 @@ export default class Main extends Component {
 
         const { docs } = response.data;
 
-        console.log(docs);
+        this.setState({ quantidade: docs.length });
     };
 
     render() {
         return (
             <View>
-                <Text>Página Main</Text>
+                <Text>Página Main: {this.state.quantidade}</Text>
             </View>
         );
     }
