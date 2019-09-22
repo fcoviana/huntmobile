@@ -10,10 +10,10 @@ export default class Main extends Component {
     };
 
     state = {
-        quantidade: 0
+        docs: []
     };
 
-    componentDidMount(){
+    componentDidMount() {
         this.loadProducts();
     }
 
@@ -22,13 +22,16 @@ export default class Main extends Component {
 
         const { docs } = response.data;
 
-        this.setState({ quantidade: docs.length });
+        this.setState({ docs });
     };
 
     render() {
         return (
             <View>
-                <Text>Página Main: {this.state.quantidade}</Text>
+                <Text>Página Main</Text>
+                {this.state.docs.map(product => (
+                    <Text>{product.title}</Text>
+                ))}
             </View>
         );
     }
