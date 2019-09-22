@@ -9,20 +9,36 @@ export default class Main extends Component {
     };
 
     state = {
-        docs: []
+        productInfo: {},
+        docs: [],
+        page: 1
     };
 
     componentDidMount() {
         this.loadProducts();
     }
 
-    loadProducts = async () => {
-        const response = await api.get('/products');
+    loadProducts = async (page = 1) => {
+        const response = await api.get(`/products?page=${page}`);
 
-        const { docs } = response.data;
+        const { docs, ...productInfo } = response.data;
 
-        this.setState({ docs });
+        this.setState({ 
+            docs:[...this.state.docs, ...docs], 
+            productInfo, 
+            page
+        });
     };
+
+    loadMore = () => {
+        const { page, productInfo } = this.state;
+
+        if(page === productInfo.page) return;
+
+        const pageNumber = page + 1;
+
+        this.loadProducts(pageNumber);
+    }
 
     renderItem = ({ item }) => (
         <View style={styles.productContainer}>
@@ -43,6 +59,8 @@ export default class Main extends Component {
                     data={this.state.docs}
                     keyExtractor={item => item._id}
                     renderItem={this.renderItem}
+                    onEndReached={this.loadMore}
+                    onEndReachedThreshold={0.1}
                 />
             </View>
         );
@@ -54,7 +72,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#fafafa"
     },
-    list:{
+    list: {
         padding: 20
     },
     productContainer: {
@@ -65,18 +83,18 @@ const styles = StyleSheet.create({
         padding: 20,
         marginBottom: 20
     },
-    productTitle:{
+    productTitle: {
         fontSize: 18,
         fontWeight: 'bold',
         color: "#333"
     },
-    productDescription:{
+    productDescription: {
         fontSize: 16,
         color: "#999",
         marginTop: 5,
         lineHeight: 24
-    }, 
-    productButton:{
+    },
+    productButton: {
         height: 42,
         borderRadius: 5,
         borderWidth: 2,
@@ -86,7 +104,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginTop: 10
     },
-    productButtonText:{
+    productButtonText: {
         fontSize: 16,
         color: "#0e5dca",
         fontWeight: "bold"
